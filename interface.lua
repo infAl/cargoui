@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
---	cargo ui/interface.lua
+--	cargoui/interface.lua
 --
 --	This script is attached to the player ship and provides a UI for seeing
 --	the ship's full cargo.
@@ -8,9 +8,9 @@
 
 -- Include Files
 package.path = package.path .. ";data/scripts/mods/?.lua"
-require("cargoui/config")
+local Config = require("cargoui/config")
 
-if not disableMod then
+if not Config.disableMod then
 
 package.path = package.path .. ";data/scripts/lib/?.lua"
 require ("utility")
@@ -24,7 +24,7 @@ local cargoItemHeading = nil
 local cargoListLastSelectedIndex = 0
 
 function getIcon(seed, rarity)
-    return modIcon
+    return Config.modIcon
 end
 
 function interactionPossible(player)
@@ -39,10 +39,10 @@ function initUI()
     local menu = ScriptUI()
     cargoUI = menu:createWindow(Rect(res * 0.5 - size * 0.5, res * 0.5 + size * 0.5))
 
-    cargoUI.caption = modName
+    cargoUI.caption = Config.modName
     cargoUI.showCloseButton = 1
     cargoUI.moveable = 1
-    menu:registerWindow(cargoUI, modName);
+    menu:registerWindow(cargoUI, Config.modName);
 	
 	local pos = Rect(10, 10, 270, size.y-10)
 	cargoList = cargoUI:createListBox(pos)
@@ -70,15 +70,15 @@ function initUI()
 	infoPanel.totalSize = infoPanel.container:createLabel(vec2(0, 240), "", 16)
 	infoPanel.suspicious = infoPanel.container:createLabel(vec2(300, 240), "", 16)
 	
-	infoPanel.dumpAll = infoPanel.container:createButton(Rect(0, 300, 180, 340), dumpAll, "onDumpAllButtonPressed")
+	infoPanel.dumpAll = infoPanel.container:createButton(Rect(0, 300, 180, 340), Config.dumpAll, "onDumpAllButtonPressed")
 	
-	infoPanel.dumpQty = infoPanel.container:createButton(Rect(0, 350, 180, 390), dumpQty, "onDumpQtyButtonPressed")
+	infoPanel.dumpQty = infoPanel.container:createButton(Rect(0, 350, 180, 390), Config.dumpQty, "onDumpQtyButtonPressed")
 	
 	infoPanel.dumpQtyValue = infoPanel.container:createTextBox(Rect(190, 350, 230, 390), "onDumpQtyValueChanged")
 	
 	infoPanel.container:hide()
 	
-	local vers = modName .. string.format(" v%i.%i.%i", modVersion.major, modVersion.minor, modVersion.revision)
+	local vers = Config.modName .. string.format(" v%i.%i.%i", Config.modVersion.major, Config.modVersion.minor, Config.modVersion.revision)
 	cargoUI:createLabel(vec2(size.x-150, size.y-20), vers, 12)
 end
 
@@ -113,16 +113,16 @@ function onShowWindow()
 				cargoList:addEntry(good.name)
 				
 				if good.dangerous then
-					cargoList:setEntry(cargoList.size-1, string.format("%s %s", dangerous, good.name), false, false, colorDangerous)
+					cargoList:setEntry(cargoList.size-1, string.format("%s %s", Config.dangerous, good.name), false, false, Config.colorDangerous)
 				end
 				if good.suspicious then 
-					cargoList:setEntry(cargoList.size-1, string.format("%s %s", suspicious, good.name), false, false, colorSuspicious)
+					cargoList:setEntry(cargoList.size-1, string.format("%s %s", Config.suspicious, good.name), false, false, Config.colorSuspicious)
 				end
 				if good.illegal then
-					cargoList:setEntry(cargoList.size-1, string.format("%s %s", illegal, good.name), false, false, colorIllegal)
+					cargoList:setEntry(cargoList.size-1, string.format("%s %s", Config.illegal, good.name), false, false, Config.colorIllegal)
 				end
 				if good.stolen then
-					cargoList:setEntry(cargoList.size-1, string.format("%s %s", stolen, good.name), false, false, colorStolen)
+					cargoList:setEntry(cargoList.size-1, string.format("%s %s", Config.stolen, good.name), false, false, Config.colorStolen)
 				end
 			end
 			cargoListLastSelectedIndex = cargoList.selected
@@ -186,33 +186,33 @@ function updateUI()
 	infoPanel.icon.color = ColorARGB(0.5, 1, 1, 1)
 	
 	infoPanel.description.caption = selectedGood.description
-	infoPanel.size.caption = string.format(sizeEa, selectedGood.size)
-	infoPanel.value.caption = string.format(baseValue, selectedGood.price)
-	infoPanel.quantity.caption = string.format(quantity, selectedGoodAmount)
-	infoPanel.totalSize.caption = string.format(totalSize, selectedGood.size * selectedGoodAmount)
+	infoPanel.size.caption = string.format(Config.sizeEa, selectedGood.size)
+	infoPanel.value.caption = string.format(Config.baseValue, selectedGood.price)
+	infoPanel.quantity.caption = string.format(Config.quantity, selectedGoodAmount)
+	infoPanel.totalSize.caption = string.format(Config.totalSize, selectedGood.size * selectedGoodAmount)
 	
 	if selectedGood.stolen then
-		infoPanel.stolen.caption = stolen .. ": " .. yes
+		infoPanel.stolen.caption = Config.stolen .. ": " .. Config.yes
 	else
-		infoPanel.stolen.caption = stolen .. ": " .. no
+		infoPanel.stolen.caption = Config.stolen .. ": " .. Config.no
 	end
 		
 	if selectedGood.illegal then
-		infoPanel.illegal.caption = illegal .. ": " .. yes
+		infoPanel.illegal.caption = Config.illegal .. ": " .. Config.yes
 	else
-		infoPanel.illegal.caption = illegal .. ": " .. no
+		infoPanel.illegal.caption = Config.illegal .. ": " .. Config.no
 	end
 		
 	if selectedGood.dangerous then
-		infoPanel.dangerous.caption = dangerous .. ": " .. yes
+		infoPanel.dangerous.caption = Config.dangerous .. ": " .. Config.yes
 	else
-		infoPanel.dangerous.caption = dangerous .. ": " .. no
+		infoPanel.dangerous.caption = Config.dangerous .. ": " .. Config.no
 	end
 		
 	if selectedGood.suspicious then
-		infoPanel.suspicious.caption = suspicious .. ": " .. yes
+		infoPanel.suspicious.caption = Config.suspicious .. ": " .. Config.yes
 	else
-		infoPanel.suspicious.caption = suspicious .. ": " .. no
+		infoPanel.suspicious.caption = Config.suspicious .. ": " .. Config.no
 	end
 	
 	infoPanel.container:show()
